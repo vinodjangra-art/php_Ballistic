@@ -13,7 +13,12 @@
     Department: <input type="text" name="dept"><br><br>
     
     <input type="submit" name="submit" value="Submit">
-</form>
+    <input type= "submit" name= "fetch" value = "Fetch Table" >
+
+
+
+
+
 
 <?php
 
@@ -50,7 +55,8 @@ if(isset($_POST['submit'])) {
 
         try {
             // Prepare statement
-            $stmt = $conn->prepare("INSERT INTO FormTable (id, name, dept) VALUES (:id, :name, :dept)");
+            $stmt = $conn->prepare("INSERT INTO formtable(id, name, dept)
+             VALUES (:id, :name, :dept)");
 
             // Bind parameters
             $stmt->bindParam(':id', $id);
@@ -67,6 +73,27 @@ if(isset($_POST['submit'])) {
         }
     }
 }
+
+if(isset($_POST['fetch'])){
+
+$stmt = $conn->prepare("SELECT * FROM formtable");
+
+$stmt->execute();
+
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//display rows
+
+foreach($result as $row){
+    echo "<tr>";
+
+    echo"<td>" . $row['id'] . "</td>";
+    echo"<td>" . $row['name'] . "</td>";
+    echo"<td>" . $row['dept'] . "</td>";
+    echo "</tr>";
+}
+}
+
 
 // Close connection
 $conn = null;
