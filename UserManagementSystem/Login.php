@@ -1,11 +1,23 @@
 <?php 
-if(isset($_SESSION["user_id"])){
-    $role = $_SESSION['role'];
+session_start();
+$role = $_SESSION['role'];
+echo $role;
+if (isset($_SESSION['role'])) {
 
-  
-   header("Location:student/dashboard.php");
+    if ($_SESSION['role'] == 'student') {
+        header("Location: student/dashboard.php");
+        exit();
+    }
+
+    elseif ($_SESSION['role'] == 'instructor') {
+        header("Location: instructor/dashboard.php");
+        exit();
+    }
+    else {
+        header("Location: admin/dashboard.php");
+
+    }
 }
-
 
 require 'config/db.php';
 if(isset($_POST['login'])) {
@@ -26,7 +38,7 @@ try{
     }
 
     else if(password_verify($password, $user['password'])){
-        session_start();
+       
 
     // Store session data
     $_SESSION['user_id'] = $user['id'];

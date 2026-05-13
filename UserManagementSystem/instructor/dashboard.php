@@ -1,11 +1,236 @@
+
+<?php
+
+session_start();
+require '../config/db.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Login.php");
+    exit();
+}
+
+// Allow only instructors
+if ($_SESSION['role'] != 'instructor') {
+    header("Location: ../Login.php");
+    exit();
+}
+
+// Get logged in user id
+$id = $_SESSION['user_id'];
+
+// Fetch instructor data
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
+$stmt->bindParam(':id', $id);
+$stmt->execute();
+
+$instructor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// If no instructor found
+
+// echo $instructor;
+//     foreach($instructor as $key => $value){
+//         echo "$key: $value <br>";
+//     }
+
+if (!$instructor) {
+    session_destroy();
+    header("Location: ../Login.php");
+
+    
+    exit();
+}
+   
+  $stmt  = $conn->prepare("SELECT * FROM users WHERE role = 'student' ");
+  $stmt->execute();
+  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <title>Instructor Dashboard</title>
 </head>
-<body>
-    <h1>Welcome to Instructor Dashboard</h1>
+
+<body class="bg-[#050C18] min-h-screen text-white">
+
+    <!-- //navbar -->
+    <div class="bg-[#0E295A] px-8 py-4 flex justify-between items-center shadow-lg">
+
+        <h1 class="text-2xl font-bold text-[#FED50A]">
+            Instructor Dashboard
+        </h1>
+
+        <a href="../logout.php"
+           class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
+            Logout
+        </a>
+
+    </div>
+
+    <!-- Instructor info -->
+    <div class=" mx-auto mt-10 bg-[#0E295A] rounded-2xl p-8 shadow-2xl">
+
+        <!-- Profile Section -->
+        <div class="flex items-center gap-8">
+
+            <img
+                src="../uploads/instructor.png"
+                alt="Profile"
+                class="w-32 h-32 rounded-full border-4 border-[#FED50A] object-cover"
+            >
+
+            <div>
+
+                <h2 class="text-3xl font-bold">
+                    <?php
+                    echo ($instructor['firstName']) . " " .
+                         ($instructor['lastName']);
+                    ?>
+                </h2>
+
+                <p class="text-[#A0A7B4] mt-2">
+                    @<?php echo ($instructor['username']); ?>
+                </p>
+
+                <p class="text-[#57A6DA] mt-1">
+                    <?php echo($instructor['email']); ?>
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+
+            <div class="bg-[#050C18] p-5 rounded-xl">
+                <h3 class="text-[#FED50A] font-semibold mb-2">
+                    Address
+                </h3>
+
+                <p>
+                    <?php echo ($instructor['address']); ?>
+                </p>
+            </div>
+
+            <div class="bg-[#050C18] p-5 rounded-xl">
+                <h3 class="text-[#FED50A] font-semibold mb-2">
+                    Phone Number
+                </h3>
+
+                <p>
+                    <?php echo ($instructor['phone']); ?>
+                </p>
+            </div>
+
+            <div class="bg-[#050C18] p-5 rounded-xl">
+                <h3 class="text-[#FED50A] font-semibold mb-2">
+                    Gender
+                </h3>
+
+                <p>
+                    <?php echo ($instructor['gender']); ?>
+                </p>
+            </div>
+
+            <div class="bg-[#050C18] p-5 rounded-xl">
+                <h3 class="text-[#FED50A] font-semibold mb-2">
+                    Role
+                </h3>
+
+                <p>
+                    <?php echo ($instructor['role']); ?>
+                </p>
+            </div>
+
+        </div>
+    </div>
+    <!-- students list -->
+      <div class="flex items-center justify-center mt-10 text-2xl font-bold text-[#FED50A]">
+            Students List
+        </div>
+
+        <div>
+
+
+
+<table class="w-full  border-collapse border border-gray-300 text-center">
+
+    <tr class="text-[#FED50A] ">
+        <th class="p-3 border">ID</th>
+        <th class="p-3 border">First Name</th>
+        <th class="p-3 border">Last Name</th>
+        <th class="p-3 border">Email</th>
+        <th class="p-3 border">Phone</th>
+        <th class="p-3 border">Address</th>
+        <th class="p-3 border">Gender</th>
+        <th class="p-3 border">Actions</th>
+    </tr>
+
+    <?php foreach ($students as $student) { ?>
+        <tr class="">
+
+            <td class="p-3 border">
+                <?php echo $student['id']; ?>
+            </td>
+
+            <td class="p-3 border">
+                <?php echo $student['firstName']; ?>
+            </td>
+
+            <td class="p-3 border">
+                <?php echo $student['lastName']; ?>
+            </td>
+
+            <td class="p-3 border">
+                <?php echo $student['email']; ?>
+            </td>
+
+            <td class="p-3 border">
+                <?php echo $student['phone']; ?>
+            </td>
+
+            <td class="p-3 border">
+                <?php echo $student['address']; ?>
+            </td>
+
+            <td class="p-3 border">
+                <?php echo $student['gender']; ?>
+            </td>
+
+            <td class="flex flex-col p-3 border items-center justify-center gap-1">
+                
+                <!-- Edit Button -->
+                <a href="editStudent.php?id=<?php echo $student['id']; ?>"
+                   class="bg-blue-500 w-full mx-auto text-white px-3 py-1 rounded hover:bg-blue-600">
+                    Edit
+                </a>
+
+                <!-- Delete Button -->
+                <a href="deleteStudent.php?id=<?php echo $student['id']; ?>"
+                   class="bg-red-500 w-full text-white px-3 py-1 rounded hover:bg-red-600 ml-2"
+                   onclick="return confirm('Are you sure you want to delete this student?')">
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+    <?php } ?>
+
+</table>
+
+        </div>
+    
+
 </body>
 </html>
