@@ -7,13 +7,13 @@ require '../config/db.php';
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Login.php");
-    exit();
+  
 }
 
 // Allow only students
 if ($_SESSION['role'] != 'student') {
     header("Location: ../Login.php");
-    exit();
+   
 }
 
 // Get logged in user id

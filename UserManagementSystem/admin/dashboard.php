@@ -2,6 +2,7 @@
 <?php
 
 session_start();
+require 'pagination.php';
 require '../config/db.php';
 
 // Check if user is logged in
@@ -24,32 +25,9 @@ $stmt->execute();
 
 $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Fetch instructor data
-$stmt = $conn->prepare("SELECT * FROM users WHERE role ='instructor' ");
 
-$stmt->execute();
-
-$instructors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
-// If no instructor found
-
-// echo $instructor;
-//     foreach($instructor as $key => $value){
-//         echo "$key: $value <br>";
-//     }
-
-if (!$instructors) {
-    session_destroy();
-    header("Location: ../Login.php");
-    exit();
-}
    
-  $stmt  = $conn->prepare("SELECT * FROM users WHERE role = 'student' ");
-  $stmt->execute();
-  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  
+
 
 
 ?>
@@ -100,7 +78,7 @@ if (!$instructors) {
                     echo ($admin['firstName']) . " " .
                          ($admin['lastName']);
                     ?>
-                </h2>
+                </h2>S
 
                 <p class="text-[#A0A7B4] mt-2">
                     @<?php echo ($admin['username']); ?>
@@ -178,6 +156,7 @@ if (!$instructors) {
         <th class="p-3 border">Phone</th>
         <th class="p-3 border">Address</th>
         <th class="p-3 border">Gender</th>
+        <th class="p-3 border">Actions</th>
         
     </tr>
 
@@ -234,6 +213,16 @@ if (!$instructors) {
     <?php } ?>
 
 </table>
+
+        <div class="flex justify-center gap-2 mt-4 mx-auto w-full max-w-md">
+            <a href="?page_instructors=<?php echo max(1, $page_instructors - 1); ?>&page_students=<?php echo $page_students; ?>"
+               class="bg-gray-300 text-gray-700 px-4 py-2 rounded-l hover:bg-gray-400">Prev</a>
+            <p class="bg-gray-300 text-gray-700 px-4 py-2">
+                Page <?php echo $page_instructors; ?> of <?php echo $total_pages_instructors; ?>
+            </p>
+            <a href="?page_instructors=<?php echo min($total_pages_instructors, $page_instructors + 1); ?>&page_students=<?php echo $page_students; ?>"
+               class="bg-gray-300 text-gray-700 px-4 py-2 rounded-r hover:bg-gray-400">Next</a>
+        </div>
 
         </div>
 
@@ -312,6 +301,16 @@ if (!$instructors) {
 
 </table>
 
+        </div>
+         <!-- pagination bar -->
+        <div class="flex justify-center gap-2 mt-4 mx-auto w-full max-w-md">
+            <a href="?page_instructors=<?php echo $page_instructors; ?>&page_students=<?php echo max(1, $page_students - 1); ?>"
+             class="bg-gray-300 text-gray-700 px-4 py-2 rounded-l hover:bg-gray-400">Prev</a>
+             <p class="bg-gray-300 text-gray-700 px-4 py-2">
+                 Page <?php echo $page_students; ?> of <?php echo $total_pages_students; ?>
+             </p>
+            <a href="?page_instructors=<?php echo $page_instructors; ?>&page_students=<?php echo min($total_pages_students, $page_students + 1); ?>"
+             class="bg-gray-300 text-gray-700 px-4 py-2 rounded-r hover:bg-gray-400">Next</a>
         </div>
     
 

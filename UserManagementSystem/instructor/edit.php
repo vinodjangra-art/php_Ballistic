@@ -42,7 +42,7 @@ if(isset($_POST['submit'])){
         $stmt->execute();
 
         echo "<p style='color:green;'>User updated successfully!</p>";
-         header("Location: dashboard.php");
+        header("Location: dashboard.php");
 
     }
     catch(PDOException $e){
@@ -50,7 +50,7 @@ if(isset($_POST['submit'])){
     }
 
 }
-   
+
 
 
 

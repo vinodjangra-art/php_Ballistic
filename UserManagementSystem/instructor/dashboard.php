@@ -2,6 +2,7 @@
 <?php
 
 session_start();
+require 'pagination.php';
 require '../config/db.php';
 
 // Check if user is logged in
@@ -26,6 +27,7 @@ $stmt->execute();
 
 $instructor = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
 // If no instructor found
 
 // echo $instructor;
@@ -41,9 +43,9 @@ if (!$instructor) {
     exit();
 }
    
-  $stmt  = $conn->prepare("SELECT * FROM users WHERE role = 'student' ");
-  $stmt->execute();
-  $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//   $stmt  = $conn->prepare("SELECT * FROM users WHERE role = 'student' ");
+//   $stmt->execute();
+//   $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
   
 
 
@@ -210,13 +212,13 @@ if (!$instructor) {
             <td class="flex flex-col p-3 border items-center justify-center gap-1">
                 
                 <!-- Edit Button -->
-                <a href="editStudent.php?id=<?php echo $student['id']; ?>"
+                <a href="edit.php?id=<?php echo $student['id']; ?>"
                    class="bg-blue-500 w-full mx-auto text-white px-3 py-1 rounded hover:bg-blue-600">
                     Edit
                 </a>
 
                 <!-- Delete Button -->
-                <a href="deleteStudent.php?id=<?php echo $student['id']; ?>"
+                <a href="delete.php?id=<?php echo $student['id']; ?>"
                    class="bg-red-500 w-full text-white px-3 py-1 rounded hover:bg-red-600 ml-2"
                    onclick="return confirm('Are you sure you want to delete this student?')">
                     Delete
@@ -229,6 +231,16 @@ if (!$instructor) {
 
 </table>
 
+        </div>
+        <!-- pagination bar -->
+        <div class="flex justify-center mt-4 mx-auto w-full max-w-md">
+            <a href="?page=<?php echo max(1, $page - 1); ?>"
+             class="bg-gray-300 text-gray-700 px-4 py-2 rounded-l hover:bg-gray-400">Prev</a>
+             <p class="bg-gray-300 text-gray-700 px-4 py-2">
+                 Page <?php echo $page; ?> of <?php echo $total_pages; ?>
+             </p>
+            <a href="?page=<?php echo min($total_pages, $page + 1); ?>"
+             class="bg-gray-300 text-gray-700 px-4 py-2 rounded-r hover:bg-gray-400">Next</a>
         </div>
     
 

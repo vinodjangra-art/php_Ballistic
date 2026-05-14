@@ -15,7 +15,7 @@ if (isset($_SESSION['role'])) {
     }
     else {
         header("Location: admin/dashboard.php");
-
+        exit();
     }
 }
 
@@ -70,12 +70,7 @@ try{
     else{
         echo "<p style='color:red;'>Incorrect password!</p>";
     }
-
-   
-
 }
-
-
 catch(PDOException $e){
     echo "<p style='color:red;'>Error: " . $e->getMessage() . "</p>";
 

@@ -13,8 +13,33 @@
         $phone_number = $_POST['phone_number'];
 
         $gender = $_POST['gender'];
-        $profile_picture = $_FILES['profile_picture']['name'];
+        $profile_picture = '';
 
+        if (!empty($_FILES['profile_picture']['name'])) {
+            if ($_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK) {
+                echo "<p style='color:red;'>File upload error: " . $_FILES['profile_picture']['error'] . "</p>";
+            } else {
+                $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+                $imageFileType = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+
+                if (!in_array($imageFileType, $allowed_ext)) {
+                    echo "<p style='color:red;'>Only JPG, JPEG, PNG, and GIF files are allowed.</p>";
+                } else {
+                    $upload_dir = __DIR__ . '/uploads/';
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+
+                    $profile_picture = time() . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['profile_picture']['name']));
+                    $target_file = $upload_dir . $profile_picture;
+
+                    if (!move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
+                        echo "<p style='color:red;'>Error uploading profile picture.</p>";
+                        $profile_picture = '';
+                    }
+                }
+            }
+        }
 
         //validation
         if(empty($first_name) || empty($last_name)
