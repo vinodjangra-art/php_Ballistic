@@ -71,10 +71,23 @@ if (!$instructor) {
             Instructor Dashboard
         </h1>
 
-        <a href="../logout.php"
+        <div class="flex justify-between gap-4">
+             <a href="courses.php?id=<?php echo $instructor['id']; ?>"
+            
+           class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
+            My Courses
+        </a>
+            <a href="create.php?id=<?php echo $instructor['id']; ?>"
+            
+           class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
+            Create Course
+        </a>
+             <a href="../logout.php"
            class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
             Logout
         </a>
+        </div>
+        
 
     </div>
 

@@ -1,79 +1,104 @@
- <?php
-    require 'config/db.php';
+<?php
+require 'config/db.php';
 
-    if(isset($_POST['submit'])){
-        $role = $_POST['user_type'];
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $email = $_POST['email'];
-         $username = $_POST['username'];
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+if (isset($_POST['submit'])) {
 
-        $address = $_POST['address'];
-        $phone_number = $_POST['phone_number'];
+    $role = $_POST['user_type'];
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $email = trim($_POST['email']);
+    $username = trim($_POST['username']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-        $gender = $_POST['gender'];
-        $profile_picture = '';
+    $address = trim($_POST['address']);
+    $phone_number = trim($_POST['phone_number']);
+    $gender = $_POST['gender'];
 
-        if (!empty($_FILES['profile_picture']['name'])) {
-            if ($_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK) {
-                echo "<p style='color:red;'>File upload error: " . $_FILES['profile_picture']['error'] . "</p>";
-            } else {
-                $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
-                $imageFileType = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+    $profile_picture = '';
 
-                if (!in_array($imageFileType, $allowed_ext)) {
-                    echo "<p style='color:red;'>Only JPG, JPEG, PNG, and GIF files are allowed.</p>";
-                } else {
-                    $upload_dir = __DIR__ . '/uploads/';
-                    if (!is_dir($upload_dir)) {
-                        mkdir($upload_dir, 0755, true);
-                    }
+    // Validation
+    if (
+        empty($first_name) || empty($last_name) ||
+        empty($email) || empty($username) ||
+        empty($_POST['password']) || empty($address) ||
+        empty($phone_number) || empty($gender)
+    ) {
 
-                    $profile_picture = time() . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', basename($_FILES['profile_picture']['name']));
-                    $target_file = $upload_dir . $profile_picture;
+        echo "<p style='color:red;'>All fields are required!</p>";
 
-                    if (!move_uploaded_file($_FILES['profile_picture']['tmp_name'], $target_file)) {
-                        echo "<p style='color:red;'>Error uploading profile picture.</p>";
-                        $profile_picture = '';
-                    }
-                }
+    } else {
+
+        try {
+
+            // =========================
+            // FILE UPLOAD START
+            // =========================
+
+            $folder="";
+            if(!empty($_FILES['profile_picture']["name"])){
+                  $image_name = $_FILES['profile_picture']["name"];
+                  $tmp_name = $_FILES['profile_picture']['tmp_name'];
+                  $file_size = $_FILES["profile_picture"]['size'];
+
+                  $folder=basename($image_name);
+                  $target_file= "uploads/" . $folder;
+
+                  move_uploaded_file($tmp_name,$target_file);
+                
             }
+
+            // =========================
+            // INSERT USER
+            // =========================
+
+            $stmt = $conn->prepare("
+                INSERT INTO users(
+                    role,
+                    firstName,
+                    lastName,
+                    email,
+                    username,
+                    password,
+                    address,
+                    phone,
+                    gender,
+                    profile_picture
+                )
+                VALUES(
+                    :role,
+                    :firstName,
+                    :lastName,
+                    :email,
+                    :username,
+                    :password,
+                    :address,
+                    :phone,
+                    :gender,
+                    :profile_picture
+                )
+            ");
+
+            $stmt->bindParam(':role', $role);
+            $stmt->bindParam(':firstName', $first_name);
+            $stmt->bindParam(':lastName', $last_name);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':password', $password);
+            $stmt->bindParam(':address', $address);
+            $stmt->bindParam(':phone', $phone_number);
+            $stmt->bindParam(':gender', $gender);
+            $stmt->bindParam(':profile_picture', $folder);
+
+            $stmt->execute();
+
+            echo "<p style='color:green;'>Registered Successfully!</p>";
+
+        } catch (PDOException $e) {
+
+            echo "<p style='color:red;'>Error: " . $e->getMessage() . "</p>";
         }
-
-        //validation
-        if(empty($first_name) || empty($last_name)
-             || empty($email) || empty($username) || empty($_POST['password']) 
-            || empty($address) || empty($phone_number) 
-            ||empty($gender)){
-            echo "<p style='color:red;'>All fields are required!</p>";
-        } 
-        else{try {
-                //prepare statement
-                $stmt = $conn->prepare("INSERT INTO users(role,firstName,lastName,
-                email,username,password,address,phone,gender,profile_picture) VALUES(:role,:firstName,:lastName,
-                :email,:username,:password,:address,:phone,:gender,:profile_picture)");
-
-                //bind parameters 
-                $stmt->bindParam(':role', $role);
-                $stmt->bindParam(':firstName', $first_name);
-                $stmt->bindParam(':lastName', $last_name);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':username', $username);
-                $stmt->bindParam(':password', $password);
-                $stmt->bindParam(':address', $address);
-                $stmt->bindParam(':phone', $phone_number);
-                $stmt->bindParam(':gender', $gender);
-                $stmt->bindParam(':profile_picture', $profile_picture);
-                $stmt->execute();
-                 echo "<p style='color:green;'>Registered Successfully!</p>";
-            }
-            catch(PDOException $e) {
-                echo "<p style='color:red;'>Error: " . $e->getMessage() . "</p>";
-            }}
-            
-    
     }
+}
 ?>
 
 <!DOCTYPE html>
