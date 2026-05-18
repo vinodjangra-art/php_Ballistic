@@ -11,13 +11,6 @@ $stmt->execute();
 
 $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-foreach($courses as $course){
-    echo $course['title'] . "<br>";
-}
-
-
-
-
 
 ?>
 
@@ -30,6 +23,8 @@ foreach($courses as $course){
     <title>My Courses</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src = "editCourse.js"></script>
 </head>
 
 <body class="bg-[#050C18] min-h-screen px-4 py-10">
@@ -125,9 +120,9 @@ foreach($courses as $course){
                     <div class="flex gap-3">
 
                         <!-- Edit -->
-                        <button
-                            class="flex-1 bg-[#57A6DA] hover:brightness-110 text-white font-semibold py-3 rounded-xl transition duration-300"
-                        >
+                        <button class="edit-btn flex-1 bg-[#57A6DA] hover:brightness-110
+                         text-white font-semibold py-3 rounded-xl transition duration-300" 
+                        data-course-id="<?php echo $course['id']; ?>">
                             Edit
                         </button>
 
@@ -146,12 +141,32 @@ foreach($courses as $course){
         <?php endforeach; ?>
 
 
-            <!-- Duplicate Course Cards Dynamically -->
+         
 
 
         </div>
 
     </div>
+
+    <!-- <div class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
 
 </body>
 </html>

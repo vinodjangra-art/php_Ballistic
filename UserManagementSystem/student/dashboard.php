@@ -16,6 +16,7 @@ if ($_SESSION['role'] != 'student') {
    
 }
 
+
 // Get logged in user id
 $id = $_SESSION['user_id'];
 
@@ -27,17 +28,20 @@ $stmt->execute();
 $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // If no student found
-
-// echo $student;
-//     foreach($student as $key => $value){
-//         echo "$key: $value <br>";
-//     }
-
 if (!$student) {
     session_destroy();
     header("Location: ../Login.php");
     exit();
 }
+
+// Fetch enrolled courses
+$stmt = $conn->prepare("SELECT * FROM courses 
+    JOIN enrollments ON courses.id = enrollments.course_id 
+    WHERE enrollments.student_id = :id");
+$stmt->bindParam(':id', $id);
+$stmt->execute();
+$courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
    
    
 ?>
@@ -85,7 +89,7 @@ if (!$student) {
         <div class="flex items-center gap-8">
 
             <img
-                src="../uploads/<?php echo $student['profile_picture'] ?>"
+                src="../uploads/<?php echo $student['profile_picture']  ?>"
                 alt="Profile"
                 class="w-32 h-32 rounded-full border-4 border-[#FED50A] object-cover"
             >
@@ -157,7 +161,84 @@ if (!$student) {
         </div>
 
     </div>
+    <div>
+        <div class="flex flex-col gap-4 items-center justify-center  mt-12 mb-6 px-4">
 
+            <h2 class="text-2xl font-bold text-[#FED50A]">
+                Enrolled Courses
+            </h2>
+
+       <!-- Courses Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <?php if (empty($courses)): ?>
+            <p class="text-center text-[#A0A7B4] col-span-full">
+                You are not enrolled in any courses yet.
+            </p>
+        <?php else: ?>
+            <?php foreach($courses as $course): ?>
+                <!-- Course Card -->
+                <div class="bg-[#0E295A] border border-[#215A9C] rounded-3xl overflow-hidden shadow-2xl hover:scale-[1.02] transition duration-300">
+
+                    <!-- Thumbnail -->
+                    <img
+                        src="../uploads/course_thumbnails/<?php echo $course['thumbnail']; ?>"
+                        alt="Course Thumbnail"
+                        class="w-full h-52 object-cover"
+                    >
+
+                    <!-- Content -->
+                    <div class="p-6">
+
+                        <!-- Category -->
+                        <div class="flex items-center justify-between mb-4">
+
+                            <span class="bg-[#FED50A]/20 text-[#FED50A] text-sm font-semibold px-3 py-1 rounded-full">
+                                <?php echo $course['category']; ?>
+                            </span>
+
+                            <span class="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">
+                                <?php echo $course['status']; ?>
+                            </span>
+
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="text-2xl font-bold text-[#ECEFF9] mb-3">
+                            <?php echo $course['title']; ?>
+                        </h2>
+
+                        <!-- Description -->
+                        <p class="text-[#A0A7B4] text-sm leading-6 mb-5">
+                            <?php echo $course['description']; ?>
+                        </p>
+
+                        <!-- Price & Level -->
+                        <div class="flex items-center justify-between mb-6">
+
+                            <span class="text-[#57A6DA] text-xl font-bold">
+                                <?php echo "$" . $course['price']; ?>
+                            </span>
+
+                            <span class="bg-[#050C18] border border-[#4A4D53] text-[#ECEFF9] text-sm px-3 py-1 rounded-lg">
+                                <?php echo $course['level']; ?>
+                            </span>
+
+                        </div>
+                         <a href="courseDetail.php?course_id=<?php echo $course['id']; ?>" 
+       class="flex flex-center justify-center items-center bg-green-500 
+       hover:brightness-110 text-[#050C18] font-bold p-10 py-3 rounded-xl transition duration-300 shadow-lg">
+       
+       View Details
+    </a>
+                    </div>
+                </div>
+                
+            <?php endforeach; ?>
+        <?php endif; ?>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
