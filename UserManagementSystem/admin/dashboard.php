@@ -19,7 +19,7 @@ if ($_SESSION['role'] != 'admin') {
 
 // Get logged in user id
 $id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
+$stmt = $conn->prepare("SELECT * FROM users WHERE id = :id ");
 $stmt->bindParam(':id', $id);
 $stmt->execute();
 
@@ -39,6 +39,8 @@ $admin = $stmt->fetch(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src = "../script/User.js"></script>
 
     <title>Admin Dashboard</title>
 </head>
@@ -52,11 +54,18 @@ $admin = $stmt->fetch(PDO::FETCH_ASSOC);
             Admin Dashboard
         </h1>
 
+        <div class="flex gap-4" >
+        <a  
+           class="add-user cursor-pointer bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
+            Add User
+        </a>
         <a href="../logout.php"
-           class="bg-red-500 px-4 py-2 rounded-lg hover:bg-red-600 transition">
+           class="bg-red-500 cursor-pointer px-4 py-2 rounded-lg hover:bg-red-600 transition">
             Logout
         </a>
 
+        </div>
+        
     </div>
 
     <!-- Admin info -->
@@ -161,11 +170,12 @@ $admin = $stmt->fetch(PDO::FETCH_ASSOC);
     </tr>
 
     <?php 
+    $i = 1;
     foreach ($instructors as $instructor) { ?>
         <tr class="">
 
             <td class="p-3 border">
-                <?php echo $instructor['id']; ?>
+                <?php echo $i++; ?>
             </td>
 
             <td class="p-3 border">
@@ -195,8 +205,8 @@ $admin = $stmt->fetch(PDO::FETCH_ASSOC);
             <td class="flex flex-col p-3 border items-center justify-center gap-1">
                 
                 <!-- Edit Button -->
-                <a href="edit.php?id=<?php echo $instructor['id']; ?>"
-                   class="bg-blue-500 w-full mx-auto text-white px-3 py-1 rounded hover:bg-blue-600">
+               <a href="" data-user-id="<?php echo $instructor['id']; ?>" 
+                   class=" edit-btn bg-blue-500 w-full mx-auto text-white px-3 py-1 rounded hover:bg-blue-600">
                     Edit
                 </a>
 
@@ -248,11 +258,13 @@ $admin = $stmt->fetch(PDO::FETCH_ASSOC);
         <th class="p-3 border">Actions</th>
     </tr>
 
-    <?php foreach ($students as $student) { ?>
+    <?php
+     $i = 1;
+     foreach ($students as $student) { ?>
         <tr class="">
 
             <td class="p-3 border">
-                <?php echo $student['id']; ?>
+                <?php echo $i++; ?>
             </td>
 
             <td class="p-3 border">
@@ -282,14 +294,15 @@ $admin = $stmt->fetch(PDO::FETCH_ASSOC);
             <td class="flex flex-col p-3 border items-center justify-center gap-1">
                 
                 <!-- Edit Button -->
-                <a href="edit.php?id=<?php echo $student['id']; ?>"
-                   class="bg-blue-500 w-full mx-auto text-white px-3 py-1 rounded hover:bg-blue-600">
+                <a href="" data-user-id="<?php echo $student['id']; ?>" 
+                   class=" edit-btn bg-blue-500 w-full mx-auto text-white px-3 py-1 rounded hover:bg-blue-600">
                     Edit
                 </a>
 
                 <!-- Delete Button -->
-                <a href="delete.php?id=<?php echo $student['id']; ?>"
-                   class="bg-red-500 w-full text-white px-3 py-1 rounded hover:bg-red-600 ml-2"
+                <a 
+                   class="dlt-user bg-red-500 w-full text-white px-3 py-1 rounded hover:bg-red-600 ml-2"
+                   data-user-id="<?php echo $student['id']; ?>" 
                    onclick="return confirm('Are you sure you want to delete this student?')">
                     Delete
                 </a>

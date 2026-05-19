@@ -191,11 +191,13 @@ if (!$instructor) {
         <th class="p-3 border">Actions</th>
     </tr>
 
-    <?php foreach ($students as $student) { ?>
+    <?php 
+    $i = 1;
+    foreach ($students as $student) { ?>
         <tr class="">
 
             <td class="p-3 border">
-                <?php echo $student['id']; ?>
+                <?php echo $i++; ?>
             </td>
 
             <td class="p-3 border">

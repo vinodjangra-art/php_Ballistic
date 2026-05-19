@@ -225,7 +225,7 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </span>
 
                         </div>
-                         <a href="courseDetail.php?course_id=<?php echo $course['id']; ?>" 
+                         <a href="../errorPage.php"
        class="flex flex-center justify-center items-center bg-green-500 
        hover:brightness-110 text-[#050C18] font-bold p-10 py-3 rounded-xl transition duration-300 shadow-lg">
        

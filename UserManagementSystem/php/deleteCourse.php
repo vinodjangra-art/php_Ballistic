@@ -4,28 +4,21 @@ session_start();
 require_once '../config/db.php';
 
 try {
-    if(isset($_POST['courseId'])) {
-        $courseId = $_POST['courseId'];
+    if(isset($_POST['id'])) {
+        $id = $_POST['id'];
         
         // Fetch course details
-        $stmt = $conn->prepare("SELECT * FROM courses WHERE id = :courseId");
-        $stmt->bindParam(':courseId',$courseId);
+        $stmt = $conn->prepare("UPDATE  courses SET score = 1  WHERE id = :id");
+        $stmt->bindParam(':id',$id);
         $stmt->execute();
-        $course = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if($course) {
+    
+     
             // Return course data as JSON
             echo json_encode([
                 'status' => 'success',
-                'data' => $course,
-                'message' => 'Course fetched successfully'
+                'message' => 'Course deleted successfully'
             ]);
-        } else {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Course not found'
-            ]);
-        }
+       
     } else {
         echo json_encode([
             'status' => 'error',

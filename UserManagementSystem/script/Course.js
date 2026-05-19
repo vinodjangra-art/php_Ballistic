@@ -2,6 +2,7 @@ $(document).ready(function(e) {
     // Handle edit button click
     $(document).on('click', '.edit-btn', function(e) {
         e.preventDefault();
+        
         var courseId = $(this).data('course-id');
         console.log("Edit clicked for course:", courseId);
         
@@ -25,7 +26,36 @@ $(document).ready(function(e) {
             }
         });
     });
-
+     //handle delete button click
+        $(document).on('click', '.dlt-course', function(e) {
+            e.preventDefault();
+        
+            var courseId = $(this).data('course-id');
+            console.log("Delete clicked for course:", courseId);
+            
+            if(confirm("Are you sure you want to delete this course?")) {
+                $.ajax({
+                    url: '../php/deleteCourse.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: courseId },
+                    success: function(response) {   
+                        if(response.status === 'success') {
+                           
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function(error) {
+                        console.error('AJAX Error:', error);
+                        alert('Error deleting course');
+                    }
+                });
+            }
+        
+        
+        });
     // Close modal
     $(document).on('click', '.close-modal', function() {
         $('#editModal').remove();
@@ -42,7 +72,7 @@ $(document).ready(function(e) {
 
 function showEditModal(course) {
     let modalHtml = `
-        <div id="editModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div id="editModal" class="fixed inset-0 bg-black-50 backdrop-blur-sm flex items-center justify-center ">
             <div class="bg-[#0E295A] border border-[#215A9C] rounded-2xl p-8 max-w-md w-full mx-4">
                 <h2 class="text-2xl flex justify-center font-bold text-[#FED50A] mb-6">Edit Course</h2>
                 

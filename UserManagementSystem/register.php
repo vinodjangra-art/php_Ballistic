@@ -29,11 +29,7 @@ if (isset($_POST['submit'])) {
     } else {
 
         try {
-
-            // =========================
             // FILE UPLOAD START
-            // =========================
-
             $folder="";
             if(!empty($_FILES['profile_picture']["name"])){
                   $image_name = $_FILES['profile_picture']["name"];
@@ -47,10 +43,7 @@ if (isset($_POST['submit'])) {
                 
             }
 
-            // =========================
             // INSERT USER
-            // =========================
-
             $stmt = $conn->prepare("
                 INSERT INTO users(
                     role,

@@ -98,7 +98,7 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="flex items-center justify-between mb-6">
 
                         <span class="text-[#57A6DA] text-xl font-bold">
-                            <?php echo "$" . $course['price']; ?>
+                            <?php echo "₹" . $course['price']; ?>
                         </span>
 
                         <span class="bg-[#050C18] border border-[#4A4D53] text-[#ECEFF9] text-sm px-3 py-1 rounded-lg">
@@ -107,16 +107,26 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     </div>
 
-                    <a href="" class="bg-[#FED50A] hover:brightness-110 text-[#050C18] font-bold px-6 py-3 rounded-xl transition duration-300 shadow-lg">
-                        <?php 
+
+                 <?php 
                         $stmt = $conn->prepare("SELECT * FROM enrollments WHERE student_id = :student_id AND course_id = :course_id");
                         $stmt->bindParam(':student_id', $student_id);
                         $stmt->bindParam(':course_id', $course['id']);
                         $stmt->execute();
                         $enrollment = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                        echo $course['status'] == 'published' && !$enrollment ? 'Enroll Now' : 'Enrolled'; ?>
-                    </a>
+                      
+                      if($enrollment) { ?>
+                        <a href="../errorPage.php"
+                            class="bg-[#57A6DA] hover:brightness-110 text-[#050C18] font-bold px-6 py-3 rounded-xl transition duration-300 shadow-lg">
+                            View Course
+                       </a>  
+                       <?php } else { ?>
+                        <a href="addtoCourse.php?id=<?php echo $course['id']; ?>"
+                            class="bg-[#FED50A] hover:brightness-110 text-[#050C18] font-bold px-6 py-3 rounded-xl transition duration-300 shadow-lg">
+                            Enroll Now
+                        </a> 
+                          <?php } ?> 
+                    
 
                 </div>
 

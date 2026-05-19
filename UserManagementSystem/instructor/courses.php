@@ -5,13 +5,11 @@ session_start();
 $instructor_id = $_SESSION['user_id'];
 
 
-$stmt = $conn->prepare("SELECT * FROM courses WHERE instructor_id = :instructor_id");
+$stmt = $conn->prepare("SELECT * FROM courses WHERE instructor_id = :instructor_id AND score = 0");
 $stmt -> bindParam(':instructor_id',$instructor_id);
 $stmt->execute();
 
 $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
 ?>
 
 
@@ -24,7 +22,7 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src = "editCourse.js"></script>
+    <script src = "../script/Course.js"></script>
 </head>
 
 <body class="bg-[#050C18] min-h-screen px-4 py-10">
@@ -58,7 +56,9 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Courses Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-        <?php foreach($courses as $course): ?>
+        <?php 
+        
+        foreach($courses as $course): ?>
             <!-- Course Card -->
             <div class="bg-[#0E295A] border border-[#215A9C] rounded-3xl overflow-hidden shadow-2xl hover:scale-[1.02] transition duration-300">
 
@@ -128,7 +128,8 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         <!-- Delete -->
                         <button
-                            class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl transition duration-300"
+                        data-course-id="<?php echo $course['id']; ?>"
+                            class="dlt-course flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl transition duration-300"
                         >
                             Delete
                         </button>
@@ -148,25 +149,6 @@ $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     </div>
 
-    <!-- <div class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Save changes</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-
+  
 </body>
 </html>
